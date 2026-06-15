@@ -144,6 +144,25 @@
   .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
   .leg-dot { width: 10px; height: 10px; border-radius: 3px; }
 
+
+  /* CATEGORIAS */
+  .cat-badge { font-size: 9px; padding: 2px 7px; border-radius: 8px; white-space: nowrap; font-weight: 600; margin-left: 4px; }
+  .cat-Promocion          { background: #E3F2FD; color: #1565C0; }
+  .cat-Talleres           { background: #E8F5E9; color: #2E7D32; }
+  .cat-Plan-de-Escuelas   { background: #F3E5F5; color: #6A1B9A; }
+  .cat-Institucional      { background: #FFF3E0; color: #E65100; }
+  .cat-Admisiones         { background: #FFF8E1; color: #F57F17; }
+  .cat-Evento             { background: #FCE4EC; color: #880E4F; }
+  .cat-Testimonios        { background: #E0F7FA; color: #006064; }
+
+  /* FILTER PILLS CATEGORIA */
+  .fpill.f-cat-Promocion.active        { background: #1565C0; color: #fff; border-color: #1565C0; }
+  .fpill.f-cat-Talleres.active         { background: #2E7D32; color: #fff; border-color: #2E7D32; }
+  .fpill.f-cat-Plan.active             { background: #6A1B9A; color: #fff; border-color: #6A1B9A; }
+  .fpill.f-cat-Institucional.active    { background: #E65100; color: #fff; border-color: #E65100; }
+  .fpill.f-cat-Admisiones.active       { background: #F57F17; color: #fff; border-color: #F57F17; }
+  .fpill.f-cat-Evento.active           { background: #880E4F; color: #fff; border-color: #880E4F; }
+  .fpill.f-cat-Testimonios.active      { background: #006064; color: #fff; border-color: #006064; }
   @media (max-width: 600px) {
     .stats { grid-template-columns: repeat(2,1fr); }
     .nav-sub { display: none; }
@@ -195,6 +214,13 @@
       <button class="fpill f-event" onclick="setFilter('event',this)">Eventos</button>
       <button class="fpill f-previa" onclick="setFilter('previa',this)">Previa</button>
       <button class="fpill f-pending" onclick="setFilter('pending',this)">Pendientes</button>
+      <button class="fpill f-cat-Promocion" onclick="setFilter('cat:Promocion',this)">Promoción</button>
+      <button class="fpill f-cat-Talleres" onclick="setFilter('cat:Talleres / Diplomados',this)">Talleres</button>
+      <button class="fpill f-cat-Plan" onclick="setFilter('cat:Plan de Escuelas',this)">Plan Escuelas</button>
+      <button class="fpill f-cat-Institucional" onclick="setFilter('cat:Institucional',this)">Institucional</button>
+      <button class="fpill f-cat-Admisiones" onclick="setFilter('cat:Admisiones / Inscripciones',this)">Admisiones</button>
+      <button class="fpill f-cat-Evento" onclick="setFilter('cat:Evento',this)">Evento</button>
+      <button class="fpill f-cat-Testimonios" onclick="setFilter('cat:Testimonios / Historias',this)">Testimonios</button>
     </div>
     <div class="search-wrap">
       <input class="search-input" type="text" placeholder="Buscar publicación..." oninput="setSearch(this.value)" id="search-input">
@@ -258,7 +284,10 @@ function getFiltered(){
   return POSTS.filter(p=>{
     if(p.month!==month) return false;
     if(filter==='pending') return !done[p.id];
-    if(filter!=='all'&&filter!=='pending'&&p.tipo!==filter) return false;
+    if(filter.startsWith('cat:')) {
+      const cat = filter.replace('cat:','');
+      if(p.categoria !== cat) return false;
+    } else if(filter!=='all'&&filter!=='pending'&&p.tipo!==filter) return false;
     if(search){
       const q=search.toLowerCase();
       return p.title.toLowerCase().includes(q)||p.copy.toLowerCase().includes(q)||p.caption.toLowerCase().includes(q);
@@ -318,6 +347,8 @@ function renderList(){
     const d=new Date(p.date+'T12:00:00');
     const preview=(p.copy!=='—'?p.copy:p.caption).replace(/\n/g,' ').substring(0,70)+'…';
     const typeLabel={feed:'Feed',story:'Historia',event:'Evento',previa:'Previa'}[p.tipo];
+    const catClass=(p.categoria||'').replace(/[^a-zA-Z]/g,'-').replace(/-+/g,'-');
+    const catBadge=p.categoria&&p.categoria!=='—'?`<span class="cat-badge cat-${catClass}">${p.categoria}</span>`:'';
     return `<div class="list-item${isDone?' done-item':''}" onclick="openPost(${p.id})">
       <div class="li-date">${d.getDate()} ${MN[month]}</div>
       <div class="li-body">
