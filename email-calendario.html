@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumen Calendario Instagram — UNIREMHOS</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; color: #1A1A1A; }
+
+  .page-controls {
+    background: #1A1A1A; padding: 16px 24px; display: flex;
+    align-items: center; gap: 16px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .page-controls label { color: #F5A623; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  .page-controls select { background: #2a2a2a; color: #fff; border: 1px solid #F5A623; padding: 6px 12px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+  .btn-generate { background: #F5A623; color: #1A1A1A; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .btn-generate:hover { background: #e09510; }
+  .btn-copy { background: transparent; color: #F5A623; border: 1px solid #F5A623; padding: 8px 20px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .btn-copy:hover { background: #F5A623; color: #1A1A1A; }
+  .page-title { color: #fff; font-size: 14px; margin-left: auto; opacity: 0.6; }
+  .btn-back { background: transparent; color: #aaa; border: 1px solid #444; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; text-decoration: none; }
+  .btn-back:hover { color: #fff; border-color: #fff; }
+
+  #email-preview { max-width: 620px; margin: 32px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 32px rgba(0,0,0,0.12); }
+
+  .email-header { background: #1A1A1A; padding: 32px 40px 28px; text-align: center; }
+  .email-header .logo-box { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .email-header .logo-icon { width: 44px; height: 44px; background: #F5A623; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: #1A1A1A; }
+  .email-header .logo-text { text-align: left; }
+  .email-header .logo-text strong { display: block; color: #fff; font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+  .email-header .logo-text span { color: #F5A623; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .email-header h1 { color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .email-header .subtitle { color: #F5A623; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+
+  .intro-band { background: #F5A623; padding: 16px 40px; display: flex; align-items: center; gap: 12px; }
+  .intro-band .intro-text { font-size: 14px; font-weight: 600; color: #1A1A1A; line-height: 1.4; }
+  .intro-band .intro-count { margin-left: auto; background: #1A1A1A; color: #F5A623; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+
+  .stats-row { background: #f8f8f8; border-bottom: 1px solid #eee; padding: 16px 40px; display: flex; gap: 0; }
+  .stat-item { flex: 1; text-align: center; padding: 0 12px; border-right: 1px solid #ddd; }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-size: 24px; font-weight: 900; color: #F5A623; line-height: 1; }
+  .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .section-header { padding: 24px 40px 12px; display: flex; align-items: center; gap: 10px; }
+  .section-header .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #1A1A1A; }
+  .section-header .section-line { flex: 1; height: 1px; background: #eee; }
+
+  .posts-list { padding: 0 40px; }
+  .post-card { border: 1px solid #eee; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .post-card-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #eee; flex-wrap: wrap; }
+  .post-date-badge { background: #1A1A1A; color: #F5A623; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 4px; white-space: nowrap; letter-spacing: 0.5px; }
+  .tipo-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tipo-feed { background: #E8F5E9; color: #2E7D32; }
+  .tipo-story { background: #E3F2FD; color: #1565C0; }
+  .tipo-event { background: #FFF3E0; color: #E65100; }
+  .tipo-previa { background: #F3E5F5; color: #6A1B9A; }
+  .post-title { font-size: 13px; font-weight: 700; color: #1A1A1A; flex: 1; }
+  .post-card-body { padding: 12px 16px; }
+  .post-field { margin-bottom: 8px; }
+  .post-field:last-child { margin-bottom: 0; }
+  .field-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 3px; }
+  .field-value { font-size: 13px; color: #333; line-height: 1.5; white-space: pre-wrap; }
+  .field-value.arte { color: #F5A623; font-weight: 600; }
+  .field-value.hashtags { color: #1565C0; font-size: 12px; }
+  .field-value.na { color: #bbb; font-style: italic; font-size: 12px; }
+
+  .email-footer { background: #1A1A1A; padding: 28px 40px; text-align: center; margin-top: 24px; }
+  .email-footer p { color: #888; font-size: 12px; line-height: 1.8; }
+  .email-footer strong { color: #F5A623; }
+  .email-footer .footer-divider { border: none; border-top: 1px solid #2a2a2a; margin: 16px 0; }
+
+  .empty-state { text-align: center; padding: 60px 40px; color: #999; }
+  .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .toast { display: none; position: fixed; bottom: 24px; right: 24px; background: #1A1A1A; color: #F5A623; padding: 12px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; z-index: 999; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+</style>
+</head>
+<body>
+
+<div class="page-controls">
+  <a href="index.html" class="btn-back">← Calendario</a>
+  <label>MES</label>
+  <select id="mes-select">
+    <option value="jun">Junio 2026</option>
+    <option value="jul">Julio 2026</option>
+    <option value="ago">Agosto 2026</option>
+  </select>
+  <button class="btn-generate" onclick="renderEmail()">Generar resumen</button>
+  <button class="btn-copy" onclick="copyHTML()">📋 Copiar HTML</button>
+  <span class="page-title">@uniremhosrd · Resumen mensual</span>
+</div>
+
+<div id="email-preview"></div>
+<div class="toast" id="toast">✅ HTML copiado al portapapeles</div>
+
+<script src="posts.js"></script>
+<script>
+const MES_NOMBRES = { jun: 'Junio', jul: 'Julio', ago: 'Agosto' };
+const TIPO_LABELS = { feed: 'Feed', story: 'Historia', event: 'Evento', previa: 'Previa' };
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('es-DO', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/^\w/, c => c.toUpperCase());
+}
+
+function renderEmail() {
+  const mes = document.getElementById('mes-select').value;
+  const posts = POSTS.filter(p => p.month === mes).sort((a, b) => a.date.localeCompare(b.date));
+  const mesNombre = MES_NOMBRES[mes];
+
+  const feed    = posts.filter(p => p.tipo === 'feed').length;
+  const stories = posts.filter(p => p.tipo === 'story').length;
+  const eventos = posts.filter(p => p.tipo === 'event').length;
+  const previas = posts.filter(p => p.tipo === 'previa').length;
+
+  let postsHTML = '';
+  if (posts.length === 0) {
+    postsHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No hay publicaciones para este mes.</p></div>`;
+  } else {
+    posts.forEach(p => {
+      const contenido = p.caption !== '—' ? p.caption : p.copy;
+      const tieneArte = p.arte !== '—';
+      const tieneHashtags = p.hashtags !== '—';
+      const tituloLimpio = p.title.replace(/^[🚀🔴💉🌍🩸🔬💼🩺👶🌟📋⏰📅📖]+\s*/, '');
+
+      postsHTML += `
+        <div class="post-card">
+          <div class="post-card-header">
+            <span class="post-date-badge">${formatDate(p.date)}</span>
+            <span class="tipo-badge tipo-${p.tipo}">${TIPO_LABELS[p.tipo]}</span>
+            <span class="post-title">${tituloLimpio}</span>
+          </div>
+          <div class="post-card-body">
+            ${tieneArte ? `<div class="post-field"><div class="field-label">🎨 Arte requerido</div><div class="field-value arte">${p.arte}</div></div>` : ''}
+            <div class="post-field">
+              <div class="field-label">📝 Contenido</div>
+              <div class="field-value">${contenido !== '—' ? contenido : '<span class="na">Sin copy definido</span>'}</div>
+            </div>
+            ${tieneHashtags ? `<div class="post-field"><div class="field-label">🏷️ Hashtags</div><div class="field-value hashtags">${p.hashtags}</div></div>` : ''}
+          </div>
+        </div>`;
+    });
+  }
+
+  document.getElementById('email-preview').innerHTML = `
+    <div class="email-header">
+      <div class="logo-box">
+        <div class="logo-icon">U</div>
+        <div class="logo-text">
+          <strong>UNIREMHOS</strong>
+          <span>Educación Continua y Promociones</span>
+        </div>
+      </div>
+      <h1>Calendario de Publicaciones</h1>
+      <div class="subtitle">Instagram @uniremhosrd · ${mesNombre} 2026</div>
+    </div>
+    <div class="intro-band">
+      <div class="intro-text">
+        Estimado equipo, a continuación el plan de publicaciones de <strong>${mesNombre}</strong>.<br>
+        Favor revisar los artes pendientes y coordinar con Promociones con 48h de anticipación.
+      </div>
+      <div class="intro-count">${posts.length} publicaciones</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">${feed}</div><div class="stat-label">Feed</div></div>
+      <div class="stat-item"><div class="stat-num">${stories}</div><div class="stat-label">Historias</div></div>
+      <div class="stat-item"><div class="stat-num">${eventos}</div><div class="stat-label">Eventos</div></div>
+      <div class="stat-item"><div class="stat-num">${previas}</div><div class="stat-label">Previas</div></div>
+    </div>
+    <div class="section-header">
+      <span class="section-title">Publicaciones del mes</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="posts-list">${postsHTML}</div>
+    <div class="email-footer">
+      <p><strong>Dirección de Educación Continua y Promociones · UNIREMHOS</strong></p>
+      <hr class="footer-divider">
+      <p>Av. Abraham Lincoln No. 126, esq. José Contreras · Santo Domingo<br>
+      SD: (809) 532-3739 · SC: (809) 528-7585 · info@uniremhos.edu.do</p>
+    </div>`;
+}
+
+function copyHTML() {
+  const preview = document.getElementById('email-preview');
+  if (!preview || !preview.innerHTML.trim()) { alert('Primero genera el resumen.'); return; }
+  navigator.clipboard.writeText(preview.innerHTML).then(() => {
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+  }).catch(() => alert('No se pudo copiar. Intenta de nuevo.'));
+}
+
+window.onload = renderEmail;
+</script>
+</body>
+</html>
