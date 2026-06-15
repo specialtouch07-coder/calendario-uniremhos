@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario de Publicaciones — UNIREMHOS</title>
+<style>
+  :root {
+    --gold: #F5A623;
+    --gold-dark: #633806;
+    --gold-light: #FFF3D6;
+    --black: #1A1A1A;
+    --white: #FFFFFF;
+    --gray: #F7F7F5;
+    --border: #E8E8E6;
+    --text: #1A1A1A;
+    --muted: #6B6B68;
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --coral: #D85A30;
+    --amber: #BA7517;
+    --blue: #1565C0;
+    --blue-light: #E3F2FD;
+    --purple: #6A1B9A;
+    --purple-light: #F3E5F5;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --pink: #880E4F;
+    --pink-light: #FCE4EC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--gray);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--black);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--gold-dark);
+    flex-shrink: 0;
+  }
+
+  .logo-text strong {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .logo-text span {
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .header-meta .mes-label {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .header-meta .ig-handle {
+    color: #888;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* MONTH TABS */
+  .month-bar {
+    background: #111;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .month-bar-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+  }
+
+  .month-btn {
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .month-btn:hover { color: #ccc; }
+  .month-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* CONTAINER */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 24px 48px;
+  }
+
+  /* STATS ROW */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* SECTION HEADER */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* POST CARDS */
+  .posts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .post-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+
+  .post-card:hover {
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+
+  .post-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #FAFAF8;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .date-badge {
+    background: var(--black);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+
+  .tipo-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .tipo-feed     { background: var(--black); color: #fff; }
+  .tipo-story    { background: var(--gold-light); color: var(--gold-dark); }
+  .tipo-event    { background: var(--teal-light); color: #085041; }
+  .tipo-previa   { background: #FFF3E0; color: #E65100; }
+
+  .cat-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .cat-Promocion                   { background: var(--blue-light); color: var(--blue); }
+  .cat-Talleres-Diplomados         { background: var(--teal-light); color: #085041; }
+  .cat-Plan-de-Escuelas            { background: var(--purple-light); color: var(--purple); }
+  .cat-Institucional               { background: #FFF3E0; color: #E65100; }
+  .cat-Admisiones-Inscripciones    { background: #FFF8E1; color: #F57F17; }
+  .cat-Evento                      { background: var(--pink-light); color: var(--pink); }
+  .cat-Testimonios-Historias       { background: var(--green-light); color: var(--green); }
+
+  .post-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .post-card-body {
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+  }
+
+  @media (max-width: 600px) {
+    .post-card-body { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .field { }
+
+  .field-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .field-value {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .field-value.arte {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .field-value.hashtags {
+    color: var(--blue);
+    font-size: 11px;
+  }
+
+  .field-value.na {
+    color: #ccc;
+    font-style: italic;
+  }
+
+  /* LEGEND */
+  .legend {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .legend-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .leg-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* FOOTER */
+  .footer {
+    background: var(--black);
+    padding: 28px 24px;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .footer p {
+    color: #666;
+    font-size: 12px;
+    line-height: 2;
+  }
+
+  .footer strong { color: var(--gold); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty p { font-size: 14px; }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-label { font-size: 12px; color: var(--muted); }
+  .progress-pct { font-size: 13px; font-weight: 700; color: var(--teal); }
+  .progress-bar { height: 5px; background: var(--gray); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--teal); border-radius: 10px; transition: width .4s; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <div class="logo-icon">U</div>
+      <div class="logo-text">
+        <strong>UNIREMHOS</strong>
+        <span>Educación Continua y Promociones</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="mes-label" id="header-mes">Junio 2026</div>
+      <div class="ig-handle">@uniremhosrd · Plan de publicaciones</div>
+    </div>
+  </div>
+</header>
+
+<!-- MONTH TABS -->
+<div class="month-bar">
+  <div class="month-bar-inner">
+    <button class="month-btn active" onclick="setMes('jun', this)">Junio</button>
+    <button class="month-btn" onclick="setMes('jul', this)">Julio</button>
+    <button class="month-btn" onclick="setMes('ago', this)">Agosto</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="container">
+
+  <!-- STATS -->
+  <div class="stats" id="stats"></div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-head">
+      <span class="progress-label" id="prog-label">Publicaciones del mes</span>
+      <span class="progress-pct" id="prog-pct">0 publicadas</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-title">Tipo</span>
+    <div class="leg"><div class="leg-dot" style="background:#1A1A1A"></div>Feed</div>
+    <div class="leg"><div class="leg-dot" style="background:#FFF3D6;border:1px solid #F5A623"></div>Historia</div>
+    <div class="leg"><div class="leg-dot" style="background:#E1F5EE"></div>Evento</div>
+    <div class="leg"><div class="leg-dot" style="background:#FFF3E0"></div>Previa</div>
+  </div>
+
+  <!-- SECTION HEADER -->
+  <div class="section-head">
+    <span class="section-title" id="section-title">Publicaciones · Junio</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- POSTS -->
+  <div class="posts-grid" id="posts-container"></div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>
+    <strong>Universidad Eugenio María de Hostos — UNIREMHOS</strong><br>
+    Av. Abraham Lincoln No. 126, esq. José Contreras · Santo Domingo<br>
+    SD: (809) 532-3739 · SC: (809) 528-7585 · info@uniremhos.edu.do
+  </p>
+</footer>
+
+<script src="posts.js"></script>
+<script>
+const MES_NOMBRES = { jun: 'Junio', jul: 'Julio', ago: 'Agosto' };
+const TIPO_LABELS = { feed: 'Feed', story: 'Historia', event: 'Evento', previa: 'Previa' };
+
+let mesActual = 'jun';
+
+function detectMesActual() {
+  const m = new Date().getMonth();
+  if (m === 5) return 'jun';
+  if (m === 6) return 'jul';
+  if (m === 7) return 'ago';
+  return 'jun';
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('es-DO', { weekday: 'short', day: 'numeric', month: 'short' })
+    .replace(/^\w/, c => c.toUpperCase());
+}
+
+function catClass(cat) {
+  return (cat || '').replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+function render() {
+  const mes = mesActual;
+  const posts = POSTS.filter(p => p.month === mes).sort((a, b) => a.date.localeCompare(b.date));
+  const mesNombre = MES_NOMBRES[mes];
+
+  document.getElementById('header-mes').textContent = mesNombre + ' 2026';
+  document.getElementById('section-title').textContent = `Publicaciones · ${mesNombre}`;
+
+  const feed    = posts.filter(p => p.tipo === 'feed').length;
+  const stories = posts.filter(p => p.tipo === 'story').length;
+  const eventos = posts.filter(p => p.tipo === 'event').length;
+  const previas = posts.filter(p => p.tipo === 'previa').length;
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-num">${posts.length}</div><div class="stat-label">Total</div></div>
+    <div class="stat"><div class="stat-num">${feed}</div><div class="stat-label">Feed</div></div>
+    <div class="stat"><div class="stat-num">${stories}</div><div class="stat-label">Historias</div></div>
+    <div class="stat"><div class="stat-num">${eventos + previas}</div><div class="stat-label">Eventos / Previas</div></div>
+  `;
+
+  document.getElementById('prog-label').textContent = `Plan de publicaciones · ${mesNombre} 2026`;
+  document.getElementById('prog-pct').textContent = `${posts.length} publicaciones`;
+  document.getElementById('prog-fill').style.width = '100%';
+
+  const container = document.getElementById('posts-container');
+
+  if (!posts.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>No hay publicaciones para este mes.</p></div>`;
+    return;
+  }
+
+  container.innerHTML = posts.map(p => {
+    const contenido = p.caption !== '—' ? p.caption : p.copy;
+    const tieneArte = p.arte !== '—';
+    const tieneHashtags = p.hashtags !== '—';
+    const tieneContenido = contenido !== '—';
+    const cc = catClass(p.categoria);
+    const catLabel = p.categoria && p.categoria !== '—' ? `<span class="cat-badge cat-${cc}">${p.categoria}</span>` : '';
+    const tituloLimpio = p.title.replace(/^[🚀🔴💉🌍🩸🔬💼🩺👶🌟📋⏰📅📖]+\s*/, '');
+
+    return `
+      <div class="post-card">
+        <div class="post-card-head">
+          <span class="date-badge">${formatDate(p.date)}</span>
+          <span class="tipo-badge tipo-${p.tipo}">${TIPO_LABELS[p.tipo] || p.tipo}</span>
+          ${catLabel}
+          <span class="post-title">${tituloLimpio}</span>
+        </div>
+        <div class="post-card-body">
+          ${tieneArte ? `
+          <div class="field">
+            <div class="field-label">Arte requerido</div>
+            <div class="field-value arte">${p.arte}</div>
+          </div>` : ''}
+          ${tieneContenido ? `
+          <div class="field">
+            <div class="field-label">Contenido</div>
+            <div class="field-value">${contenido}</div>
+          </div>` : ''}
+          ${tieneHashtags ? `
+          <div class="field">
+            <div class="field-label">Hashtags</div>
+            <div class="field-value hashtags">${p.hashtags}</div>
+          </div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function setMes(mes, btn) {
+  mesActual = mes;
+  document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+window.onload = () => {
+  mesActual = detectMesActual();
+  const btns = document.querySelectorAll('.month-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  const idx = { jun: 0, jul: 1, ago: 2 }[mesActual] || 0;
+  btns[idx].classList.add('active');
+  render();
+};
+</script>
+</body>
+</html>
